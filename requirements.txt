@@ -1,3 +1,6 @@
 sounddevice
 scipy
 sarvamai
+fastapi
+uvicorn[standard]
+python-multipart
