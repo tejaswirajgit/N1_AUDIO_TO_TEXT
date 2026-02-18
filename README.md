@@ -1,51 +1,77 @@
 
-# Voice Booking
+# Voice Booking (Audio to JSON)
 
-## Overview
-A voice-based booking system application.
+Python script that:
+1. Records microphone audio
+2. Converts speech to text using Sarvam AI STT
+3. Extracts booking intent as strict JSON
+4. Saves output to `booking_intent.json`
 
-## Getting Started
+## Files
+- `live_asr.py`: main script
+- `input.wav`: recorded audio (generated at runtime)
+- `booking_intent.json`: extracted intent output (generated at runtime)
 
-### Prerequisites
-- Node.js 14+
-- npm or yarn
+## Requirements
+- Python 3.10+
+- Working microphone
+- Sarvam API key
 
-### Installation
+Install dependencies:
+
 ```bash
-npm install
+pip install -r requirements.txt
 ```
 
-### Running the Application
+## Run
+
 ```bash
-npm start
+python live_asr.py
 ```
 
-## Project Structure
-```
-/src
-    /components
-    /pages
-    /utils
-/tests
-README.md
-package.json
-```
+## API Key
 
-## Features
-- [ ] Voice input processing
-- [ ] Booking management
-- [ ] User authentication
-- [ ] Confirmation notifications
+`live_asr.py` currently supports:
+- hardcoded `DEFAULT_API_KEY` (already present in code)
+- optional environment override via `SARVAM_API_KEY`
 
-## Development
-```bash
-npm run dev
+PowerShell override example:
+
+```powershell
+$env:SARVAM_API_KEY="your_key_here"
+python live_asr.py
 ```
 
-## Testing
-```bash
-npm test
+## Output JSON Format
+
+```json
+{
+  "intent": "BOOK_AMENITY | CANCEL_BOOKING | CHECK_AVAILABILITY",
+  "amenity": "string",
+  "date": "YYYY-MM-DD",
+  "time": "HH:MM"
+}
 ```
 
-## License
-MIT
+## Example
+
+Input speech:
+`hey i wanna book gym tomorrow at 5 pm`
+
+Expected JSON shape:
+
+```json
+{
+  "intent": "BOOK_AMENITY",
+  "amenity": "gym",
+  "date": "YYYY-MM-DD",
+  "time": "17:00"
+}
+```
+
+## Common Error
+
+If you get:
+`403 invalid_api_key_error`
+
+Your key is invalid/revoked or not being passed correctly. Update `DEFAULT_API_KEY` in `live_asr.py` or set a valid `SARVAM_API_KEY`.
