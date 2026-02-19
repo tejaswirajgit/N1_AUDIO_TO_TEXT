@@ -1,0 +1,33 @@
+# Secrets
+.env
+.env.*
+
+# Python cache/build
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE/editor
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project runtime outputs
+input.wav
+booking_intent.json
+
+# Local notes/files with sensitive content
+Audio to Text API key.txt
