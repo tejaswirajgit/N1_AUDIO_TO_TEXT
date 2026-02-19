@@ -4,14 +4,16 @@ import re
 import sys
 from datetime import datetime
 
+from dotenv import load_dotenv
 import sounddevice as sd
 from sarvamai import SarvamAI
 from sarvamai.errors.forbidden_error import ForbiddenError
 from scipy.io.wavfile import write
 
+load_dotenv()
+
 FS = 16000
 SECONDS = 5
-DEFAULT_API_KEY = "sk_t5lvafpk_L0KIjxovj4h1o9wkdqES8B05"
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -26,12 +28,10 @@ def record_audio(filename="input.wav"):
 
 
 def get_client():
-    api_key = os.getenv("SARVAM_API_KEY", DEFAULT_API_KEY)
-    if api_key:
-        api_key = api_key.strip().strip('"').strip("'")
+    api_key = os.getenv("SARVAM_API_KEY", "").strip().strip('"').strip("'")
     if not api_key:
         raise ValueError(
-            "Missing API key. Set SARVAM_API_KEY or DEFAULT_API_KEY."
+            "Missing required environment variable: SARVAM_API_KEY"
         )
     return SarvamAI(api_subscription_key=api_key)
 
@@ -47,7 +47,7 @@ def transcribe_audio(client, filename="input.wav"):
     except ForbiddenError as exc:
         raise RuntimeError(
             "Sarvam authentication failed (403 invalid_api_key_error). "
-            "Check your key in SARVAM_API_KEY/default constant, rotate if needed."
+            "Check your key in SARVAM_API_KEY and rotate if needed."
         ) from exc
     return result.transcript if hasattr(result, "transcript") else result["transcript"]
 

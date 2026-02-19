@@ -19,7 +19,16 @@ pip install -r requirements.txt
 
 ## Environment
 
-Set API key (recommended for API mode):
+Create a `.env` file in the project root:
+
+```env
+SARVAM_API_KEY=your_sarvam_api_key_here
+VOICE_BOOKING_API_KEY=your_voice_booking_api_key_here
+```
+
+The app loads `.env` automatically at startup using `python-dotenv`, so you do not need to export keys manually every time.
+
+If you still want to override values temporarily in PowerShell:
 
 ```powershell
 $env:SARVAM_API_KEY="your_key_here"
@@ -119,4 +128,4 @@ Response:
 - Max audio size for API upload is `25 MB`.
 - If you get `401` auth errors, verify `SARVAM_API_KEY`.
 - If you get `401 Invalid or missing API key`, verify `X-API-Key` and `VOICE_BOOKING_API_KEY`.
-- `live_asr.py` currently has a default hardcoded key fallback. For production, prefer env-only keys.
+- Secrets are loaded from `.env` (or runtime environment variables) only.

@@ -7,9 +7,12 @@ from typing import Literal, Optional
 
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 from sarvamai import SarvamAI
 from sarvamai.errors.forbidden_error import ForbiddenError
+
+load_dotenv()
 
 APP_NAME = "Voice Booking API"
 APP_VERSION = "1.0.0"
@@ -18,23 +21,22 @@ DEFAULT_STT_MODEL = "saaras:v3"
 DEFAULT_STT_MODE = "transcribe"
 DEFAULT_LANGUAGE_CODE = "en-IN"
 API_KEY_HEADER = "X-API-Key"
-DEFAULT_SARVAM_API_KEY = "sk_t5lvafpk_L0KIjxovj4h1o9wkdqES8B05"
+
+
+def get_required_env(var_name: str) -> str:
+    value = os.getenv(var_name, "").strip().strip('"').strip("'")
+    if not value:
+        raise RuntimeError(f"Missing required environment variable: {var_name}")
+    return value
 
 
 def get_client() -> SarvamAI:
-    api_key = os.getenv("SARVAM_API_KEY", DEFAULT_SARVAM_API_KEY).strip().strip('"').strip("'")
-    if not api_key:
-        raise RuntimeError("Missing SARVAM_API_KEY environment variable.")
+    api_key = get_required_env("SARVAM_API_KEY")
     return SarvamAI(api_subscription_key=api_key)
 
 
 def verify_api_key(x_api_key: Optional[str] = Header(default=None, alias=API_KEY_HEADER)):
-    expected_api_key = os.getenv("VOICE_BOOKING_API_KEY", "").strip().strip('"').strip("'")
-    if not expected_api_key:
-        raise HTTPException(
-            status_code=503,
-            detail="Server auth not configured. Missing VOICE_BOOKING_API_KEY.",
-        )
+    expected_api_key = get_required_env("VOICE_BOOKING_API_KEY")
     if not x_api_key or not hmac.compare_digest(x_api_key, expected_api_key):
         raise HTTPException(status_code=401, detail="Invalid or missing API key.")
 
@@ -147,6 +149,12 @@ class AudioToIntentResponse(BaseModel):
 
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION)
+
+
+@app.on_event("startup")
+def validate_env_on_startup():
+    get_required_env("SARVAM_API_KEY")
+    get_required_env("VOICE_BOOKING_API_KEY")
 
 
 @app.exception_handler(ForbiddenError)
