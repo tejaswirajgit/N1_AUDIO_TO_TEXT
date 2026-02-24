@@ -3,6 +3,7 @@ import os
 import re
 import sys
 from datetime import datetime
+from urllib import error, request as urllib_request
 
 from dotenv import load_dotenv
 import sounddevice as sd
@@ -80,7 +81,9 @@ Sentence:
 
 JSON format:
 {{
-  "intent": "BOOK_AMENITY | CANCEL_BOOKING | CHECK_AVAILABILITY",
+  "intent": "BOOK_AMENITY | CANCEL_BOOKING",
+  "building_id": "string",
+  "user_id": "string",
   "amenity": "string",
   "date": "YYYY-MM-DD",
   "time": "HH:MM"
@@ -101,16 +104,52 @@ JSON format:
 
     return {
         "intent": data.get("intent", ""),
+        "building_id": data.get("building_id", ""),
+        "user_id": data.get("user_id", ""),
         "amenity": data.get("amenity", ""),
         "date": data.get("date", ""),
         "time": data.get("time", ""),
     }
 
 
-def save_intent_json(payload, filename="booking_intent.json"):
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=2, ensure_ascii=False)
-    print("JSON saved:", filename)
+def post_booking_intent(intent_payload):
+    api_base = os.getenv("VOICE_BOOKING_API_BASE_URL", "http://localhost:8000").rstrip("/")
+    api_key = os.getenv("VOICE_BOOKING_API_KEY", "").strip().strip('"').strip("'")
+    default_building_id = os.getenv("VOICE_BOOKING_DEFAULT_BUILDING_ID", "").strip().strip('"').strip("'")
+    default_user_id = os.getenv("VOICE_BOOKING_DEFAULT_USER_ID", "").strip().strip('"').strip("'")
+
+    payload = dict(intent_payload)
+    if not payload.get("building_id"):
+        payload["building_id"] = default_building_id
+    if not payload.get("user_id"):
+        payload["user_id"] = default_user_id
+
+    if not api_key:
+        raise RuntimeError("Missing required environment variable: VOICE_BOOKING_API_KEY")
+    if not payload.get("building_id") or not payload.get("user_id"):
+        raise RuntimeError(
+            "Intent is missing building_id/user_id. Set them in speech or configure "
+            "VOICE_BOOKING_DEFAULT_BUILDING_ID and VOICE_BOOKING_DEFAULT_USER_ID."
+        )
+
+    endpoint = f"{api_base}/v1/bookings"
+    body = json.dumps(payload).encode("utf-8")
+    req = urllib_request.Request(
+        endpoint,
+        data=body,
+        method="POST",
+        headers={
+            "Content-Type": "application/json",
+            "X-API-Key": api_key,
+        },
+    )
+
+    try:
+        with urllib_request.urlopen(req, timeout=30) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="ignore")
+        raise RuntimeError(f"Booking API request failed ({exc.code}): {detail}") from exc
 
 
 if __name__ == "__main__":
@@ -125,4 +164,6 @@ if __name__ == "__main__":
     print("\nIntent JSON:")
     print(json.dumps(intent_json, indent=2, ensure_ascii=False))
 
-    save_intent_json(intent_json)
+    booking_response = post_booking_intent(intent_json)
+    print("\nBooking API Response:")
+    print(json.dumps(booking_response, indent=2, ensure_ascii=False))

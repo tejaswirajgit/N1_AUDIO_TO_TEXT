@@ -1,33 +1,33 @@
-# Secrets
+# Environment variables
 .env
 .env.*
+!.env.example
 
-# Python cache/build
+# Local databases
+*.db
+booking.db
+
+# Python cache
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
-*.pyd
-*.so
+
+# Test / cache
 .pytest_cache/
-.mypy_cache/
-.ruff_cache/
+.coverage
 
-# Virtual environments
-.venv/
-venv/
-env/
-
-# IDE/editor
+# IDE
 .vscode/
 .idea/
+.venv/
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# Project runtime outputs
-input.wav
-booking_intent.json
+# Audio files
+*.wav
+*.mp3
 
-# Local notes/files with sensitive content
-Audio to Text API key.txt
+# Generated local artifacts
+booking_intent.json
