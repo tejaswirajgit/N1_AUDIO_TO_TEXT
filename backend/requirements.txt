@@ -1,0 +1,10 @@
+sounddevice
+scipy
+sarvamai
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+sqlalchemy>=2.0
+psycopg2-binary>=2.9
+supabase>=2.6.0

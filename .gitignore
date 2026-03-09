@@ -1,0 +1,47 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Local databases
+*.db
+booking.db
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Test / cache
+.pytest_cache/
+.coverage
+
+# IDE
+.vscode/
+.idea/
+.venv/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Audio files
+*.wav
+*.mp3
+
+# Generated local artifacts
+booking_intent.json
+
+# Requested patterns
+__pycache__
+venv/
+.vscode
+node_modules
+
+# Frontend generated artifacts
+Frontend_Adminside/.next/
+Frontend_Adminside/node_modules/
+Frontend_Adminside/tsconfig.tsbuildinfo
+Frontend_Userside/project/.next/
+Frontend_Userside/project/node_modules/
+Frontend_Userside/project/tsconfig.tsbuildinfo

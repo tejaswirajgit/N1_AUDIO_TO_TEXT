@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: amenity-booking-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api_server:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
+    healthCheckPath: /health/live
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ADMIN_API_KEY
+        sync: false
+      - key: VOICE_BOOKING_API_KEY
+        sync: false
+      - key: SARVAM_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: CORS_ALLOW_ORIGINS
+        value: https://admin-amenity.netlify.app,https://user-amenity.netlify.app
