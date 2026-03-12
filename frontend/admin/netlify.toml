@@ -1,5 +1,5 @@
 [build]
-  base = "."
+  base = "frontend/admin"
   command = "npm run build"
   publish = ".next"
 
@@ -13,7 +13,5 @@
   NEXT_PUBLIC_ADMIN_APP_URL = "https://amenity-admin.netlify.app"
   ADMIN_API_BASE_URL = "https://amenity-api.onrender.com"
 
-# Note: Set ADMIN_API_KEY and ADMIN_API_BASE_URL in Netlify UI under Site settings > Environment variables
-# ADMIN_API_KEY should match your backend API key
-# ADMIN_API_BASE_URL should be your deployed backend URL
+# ADMIN_API_KEY must be set in Netlify UI: Site settings > Environment variables (never commit to git)
 

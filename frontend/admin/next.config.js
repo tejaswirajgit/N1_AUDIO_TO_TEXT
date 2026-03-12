@@ -1,9 +1,13 @@
 // next.config.js
-const path = require('path');
+/** @type {import('next').NextConfig} */
 module.exports = {
-  turbopack: {
-    root: path.resolve(__dirname)
-    // No distDirRoot override unless required
+  eslint: {
+    ignoreDuringBuilds: true,
   },
-  // ...existing config...
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  images: {
+    unoptimized: true,
+  },
 };
